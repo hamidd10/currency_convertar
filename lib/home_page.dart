@@ -1,5 +1,6 @@
 import 'package:currency_convertar/result_page.dart';
 import 'package:flutter/material.dart';
+import 'package:country_icons/country_icons.dart'; // Import the package
 
 class HomePage extends StatefulWidget {
   @override
@@ -10,6 +11,17 @@ class _HomePageState extends State<HomePage> {
   double _amount = 1.0;
   String _fromCurrency = 'USD';
   String _toCurrency = 'EUR';
+
+  // Map currency codes to country codes for flags
+  final Map<String, String> _currencyToCountry = {
+    'USD': 'US', // United States
+    'EUR': 'EU', // European Union
+    'GBP': 'GB', // United Kingdom
+    'JPY': 'JP', // Japan
+    'AFN': 'AF', // Afghanistan
+    'IRR': 'IR', // Iran
+    'PKR': 'PK', // Pakistan
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -33,10 +45,16 @@ class _HomePageState extends State<HomePage> {
             SizedBox(height: 20),
             DropdownButton<String>(
               value: _fromCurrency,
-              items: ['USD', 'EUR', 'GBP', 'JPY' ,  'AFN', 'IRR', 'PKR'].map((String value) {
+              items: ['USD', 'EUR', 'GBP', 'JPY', 'AFN', 'IRR', 'PKR'].map((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
-                  child: Text(value),
+                  child: Row(
+                    children: [
+                      CountryIcons.getSvgFlag(_currencyToCountry[value]!), // Flag icon
+                      SizedBox(width: 10),
+                      Text(value), // Currency code
+                    ],
+                  ),
                 );
               }).toList(),
               onChanged: (value) {
@@ -48,10 +66,16 @@ class _HomePageState extends State<HomePage> {
             SizedBox(height: 20),
             DropdownButton<String>(
               value: _toCurrency,
-              items: ['USD', 'EUR', 'GBP', 'JPY' ,  'AFN', 'IRR', 'PKR'].map((String value) {
+              items: ['USD', 'EUR', 'GBP', 'JPY', 'AFN', 'IRR', 'PKR'].map((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
-                  child: Text(value),
+                  child: Row(
+                    children: [
+                      CountryIcons.getSvgFlag(_currencyToCountry[value]!), // Flag icon
+                      SizedBox(width: 10),
+                      Text(value), // Currency code
+                    ],
+                  ),
                 );
               }).toList(),
               onChanged: (value) {
@@ -69,7 +93,7 @@ class _HomePageState extends State<HomePage> {
                     builder: (context) => ResultPage(
                       amount: _amount,
                       fromCurrency: _fromCurrency,
-                      toCurrency: _toCurrency,
+                      toCurrency: _toCurrency, convertedAmount: 0,
                     ),
                   ),
                 );

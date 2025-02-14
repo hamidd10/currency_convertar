@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         '/result': (context) => ResultPage(
           amount: 0.0,
           fromCurrency: '',
-          toCurrency: '',
+          toCurrency: '', convertedAmount: 0,
         ),
       },
     );

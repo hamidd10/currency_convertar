@@ -1,53 +1,29 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:country_icons/country_icons.dart'; // Import the package
 
-class ResultPage extends StatefulWidget {
+class ResultPage extends StatelessWidget {
   final double amount;
   final String fromCurrency;
   final String toCurrency;
+  final double convertedAmount;
 
   ResultPage({
     required this.amount,
     required this.fromCurrency,
     required this.toCurrency,
+    required this.convertedAmount,
   });
 
-  @override
-  _ResultPageState createState() => _ResultPageState();
-}
-
-class _ResultPageState extends State<ResultPage> {
-  double _convertedAmount = 0.0;
-  bool _isLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _convertCurrency();
-  }
-
-  Future<void> _convertCurrency() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    final String apiKey = 'YOUR_API_KEY'; // کلید API خود را اینجا وارد کنید
-    final String apiUrl = 'https://api.exchangerate-api.com/v4/latest/${widget.fromCurrency}';
-
-    final response = await http.get(Uri.parse(apiUrl));
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
-      final double rate = data['rates'][widget.toCurrency];
-      setState(() {
-        _convertedAmount = widget.amount * rate;
-        _isLoading = false;
-      });
-    } else {
-      throw Exception('خطا در دریافت نرخ ارز');
-    }
-  }
+  // Map currency codes to country codes for flags
+  final Map<String, String> _currencyToCountry = {
+    'USD': 'US', // United States
+    'EUR': 'EU', // European Union
+    'GBP': 'GB', // United Kingdom
+    'JPY': 'JP', // Japan
+    'AFN': 'AF', // Afghanistan
+    'IRR': 'IR', // Iran
+    'PKR': 'PK', // Pakistan
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -56,11 +32,35 @@ class _ResultPageState extends State<ResultPage> {
         title: Text('نتیجه تبدیل ارز'),
       ),
       body: Center(
-        child: _isLoading
-            ? CircularProgressIndicator()
-            : Text(
-          '${widget.amount} ${widget.fromCurrency} = $_convertedAmount ${widget.toCurrency}',
-          style: TextStyle(fontSize: 24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CountryIcons.getSvgFlag(_currencyToCountry[fromCurrency]!), // From currency flag
+                SizedBox(width: 10),
+                Text(
+                  '$amount $fromCurrency',
+                  style: TextStyle(fontSize: 24),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+            Icon(Icons.arrow_downward, size: 30),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CountryIcons.getSvgFlag(_currencyToCountry[toCurrency]!), // To currency flag
+                SizedBox(width: 10),
+                Text(
+                  '$convertedAmount $toCurrency',
+                  style: TextStyle(fontSize: 24),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
